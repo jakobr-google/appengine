@@ -47,6 +47,9 @@ class ContextRegistry {
   }
 
   ClientContext add(HttpRequest request) {
+    final logThing = request.hashCode;
+    stderr.writeln('XYZ Request start: $logThing');
+
     String traceId;
     // See https://cloud.google.com/trace/docs/support
     final traceHeader = request.headers.value('X-Cloud-Trace-Context');
@@ -61,9 +64,12 @@ class ContextRegistry {
     _request2context[request] = context;
 
     request.response.done.whenComplete(() {
+      stderr.writeln('XYZ Request trying to finish: $logThing');
+
       final int responseSize = request.response.headers.contentLength;
       (services.logging as LoggingImpl)
           .finish(request.response.statusCode, responseSize);
+      stderr.writeln('XYZ Request finished?: $logThing');
     });
 
     return context;

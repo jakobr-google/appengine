@@ -293,6 +293,9 @@ class SharedLoggingService {
       return;
     }
 
+    var entryCount = _entries.length;
+    stderr.writeln('XYZ flushing! $entryCount');
+
     _outstandingRequests++;
     final request = new api.WriteLogEntriesRequest()
       ..entries.addAll(_entries)
@@ -307,6 +310,7 @@ class SharedLoggingService {
           'Error:$error\n'
           '$stack');
     }).whenComplete(() {
+      stderr.writeln('XYZ Flushed! $entryCount');
       _outstandingRequests--;
       _maybeClose();
     });
