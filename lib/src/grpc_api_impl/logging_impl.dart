@@ -185,6 +185,7 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
 
     protoPayload..value = appengineRequestLog.writeToBuffer();
 
+    stderr.writeln('XYZ enquing log item: $_traceId');
     _sharedLoggingService.enqueue(logEntry);
   }
 
@@ -290,6 +291,7 @@ class SharedLoggingService {
       _timer = null;
     }
     if (_entries.length == 0) {
+      stderr.writeln('XYZ nothing to flush!');
       return;
     }
 
