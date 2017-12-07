@@ -8,6 +8,12 @@ import 'dart:async';
 
 import 'package:gcloud/service_scope.dart' as ss;
 
+void debugLog(Object content, String traceId) {
+  if (traceId != null) {
+    print('HACKING $traceId - $content');
+  }
+}
+
 class LogLevel {
   static const LogLevel CRITICAL = const LogLevel._('Critical', 4);
   static const LogLevel ERROR = const LogLevel._('Error', 3);

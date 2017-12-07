@@ -94,7 +94,7 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
     if (_estimatedSize > logEntrySizeLimit) {
       _enqueue(finish: false);
     } else {
-      stderr.writeln('XYZ size too small to enqueue: $_traceId');
+      debugLog('size too small to enqueue', _traceId);
     }
   }
 
@@ -105,7 +105,7 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
     if (_gaeLogLines.length > 0) {
       _enqueue(finish: false);
     } else {
-      stderr.writeln('XYZ nothing to flush!: $_traceId');
+      debugLog('nothing to flush!', _traceId);
     }
   }
 
@@ -118,7 +118,7 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
           responseStatus: responseStatus,
           responseSize: responseSize);
     } else {
-      stderr.writeln('XYZ nothing to finish!: $_traceId');
+      debugLog('nothing to finish!', _traceId);
     }
   }
 
@@ -191,7 +191,7 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
 
     protoPayload..value = appengineRequestLog.writeToBuffer();
 
-    stderr.writeln('XYZ enquing log item: $_traceId');
+    debugLog('enquing log item', _traceId);
     _sharedLoggingService.enqueue(logEntry);
   }
 
@@ -297,12 +297,12 @@ class SharedLoggingService {
       _timer = null;
     }
     if (_entries.length == 0) {
-      stderr.writeln('XYZ nothing to flush!');
+      debugLog('nothing to flush!', 'SERVICE');
       return;
     }
 
     var entryCount = _entries.length;
-    stderr.writeln('XYZ flushing! $entryCount');
+    debugLog('flushing! $entryCount', 'SERVICE');
 
     _outstandingRequests++;
     final request = new api.WriteLogEntriesRequest()
@@ -318,7 +318,7 @@ class SharedLoggingService {
           'Error:$error\n'
           '$stack');
     }).whenComplete(() {
-      stderr.writeln('XYZ Flushed! $entryCount');
+      debugLog('XYZ Flushed! $entryCount', 'SERVICE');
       _outstandingRequests--;
       _maybeClose();
     });
