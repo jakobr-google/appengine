@@ -47,13 +47,19 @@ class ContextRegistry {
   }
 
   ClientContext add(HttpRequest request) {
+    void write(Object value) {
+      stderr.writeln('${request.hashCode.toString().padLeft(10)} - $value');
+    }
     String traceId;
     // See https://cloud.google.com/trace/docs/support
+    request.headers.forEach((k, v) {
+      write('$k - $v');
+    });
     final traceHeader = request.headers.value('X-Cloud-Trace-Context');
     if (traceHeader != null) {
       traceId = traceHeader.split('/')[0];
     }
-    stderr.writeln('XYZ Request start: $traceId');
+    write('XYZ Request start: $traceId');
 
     final services = _getServices(request, traceId);
     final assets = new AssetsImpl(request, _appengineContext);
@@ -62,12 +68,12 @@ class ContextRegistry {
     _request2context[request] = context;
 
     request.response.done.whenComplete(() {
-      stderr.writeln('XYZ Request trying to finish: $traceId');
+      write('XYZ Request trying to finish: $traceId');
 
       final int responseSize = request.response.headers.contentLength;
       (services.logging as LoggingImpl)
           .finish(request.response.statusCode, responseSize);
-      stderr.writeln('XYZ Request finished?: $traceId');
+      write('XYZ Request finished?: $traceId');
     });
 
     return context;

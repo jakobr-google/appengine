@@ -93,6 +93,8 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
     // [finish] when the http request is done.
     if (_estimatedSize > logEntrySizeLimit) {
       _enqueue(finish: false);
+    } else {
+      stderr.writeln('XYZ size too small to enqueue: $_traceId');
     }
   }
 
@@ -102,6 +104,8 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
   Future flush() async {
     if (_gaeLogLines.length > 0) {
       _enqueue(finish: false);
+    } else {
+      stderr.writeln('XYZ nothing to flush!: $_traceId');
     }
   }
 
@@ -113,6 +117,8 @@ class GrpcRequestLoggingImpl extends LoggingImpl {
           finish: true,
           responseStatus: responseStatus,
           responseSize: responseSize);
+    } else {
+      stderr.writeln('XYZ nothing to finish!: $_traceId');
     }
   }
 
